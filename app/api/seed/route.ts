@@ -7,9 +7,10 @@ export async function GET() {
         await connectToDatabase();
 
         // Clear existing data
-        await User.deleteMany({});
-        await Job.deleteMany({});
-        await Application.deleteMany({});
+        // Clear existing data
+        try { await User.collection.drop(); } catch (e) { } // Drop collection to reset indexes
+        try { await Job.collection.drop(); } catch (e) { }
+        try { await Application.collection.drop(); } catch (e) { }
 
         // --- 1. RECRUITERS ---
         const recruitersData = [
