@@ -34,7 +34,7 @@ export async function GET() {
         // --- 2. WORKERS ---
         // Creating workers for every skill category
         const skills = ['Carpenter', 'Plumber', 'Electrician', 'Driver', 'Painter', 'Mechanic', 'Maid', 'Helper'];
-        const workersData = [];
+        const workersData: any[] = [];
 
         // Create 2 workers for each skill
         skills.forEach((skill, index) => {
