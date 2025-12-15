@@ -18,7 +18,19 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'User already exists' }, { status: 400 });
         }
 
-        const user: any = await User.create(body);
+        let user;
+        try {
+            user = await User.create(body);
+        } catch (err: any) {
+            // Self-healing: If duplicate key on 'username' (ghost index), drop it and retry
+            if (err.code === 11000 && (err.keyPattern?.username || err.message.includes('username_1'))) {
+                console.log("Detected ghost 'username_1' index. Dropping and retrying...");
+                await User.collection.dropIndex('username_1');
+                user = await User.create(body);
+            } else {
+                throw err; // Re-throw other errors
+            }
+        }
 
         return NextResponse.json({
             success: true,
